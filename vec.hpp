@@ -8,6 +8,9 @@ class Vec {
         typdef T& reference;
         typdef const T& const_reference;
 
+        /* 
+            Constructor, Deconstructor, Assignment
+        */
         Vec() {
             create();
         }
@@ -23,22 +26,22 @@ class Vec {
         }
 
         T& operator[](size_type i) {
-            return data[i];
+            return this->data[i];
         }
         const T& operator[](size_type i) const {
-            return data[i];
+            return this->data[i];
         }
 
         void push_back(const T& t) {
             // if our allocated memory storage is exceeded by constructed objects, we will grow a new & copy current vals
-            if (avail == limit) {
+            if (this->avail == this->limit) {
                 grow();
             }
-            unchecked_append(t);
+            this->unchecked_append(t);
         }
 
         size_type size() const {
-            return avail - data;
+            return this->avail - this->data;
         }
 
         /*
@@ -98,7 +101,21 @@ class Vec {
             this->data = this->limit = this->avail = 0;
         }
 
-        void grow();
-        void unchecked_append(const T&);
+        template <class T>
+        void grow() {
+            // when growing, allocate twice the space currently in use to have flexibility with adding new elements
+            size_type new_size = max(2 * (this->limit - this->data), ptrdiff(1));
+
+            // allocate new space and copy existing elements to new space
+            iterator new_data = alloc.allocate(new_size);
+            iterator new_avail = uninitialized_copy(this->data, this->avail, new_data);
+
+            this->uncreate();
+        }
+
+        template <class T>
+        void unchecked_append(const T& val) {
+            alloc.construct(this->avail++, val)
+        }
 
 };
