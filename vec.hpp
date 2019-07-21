@@ -41,18 +41,21 @@ class Vec {
             return avail - data;
         }
 
+        /*
+            Iterator methods
+        */
         iterator begin() {
-            return data;
+            return this->data;
         }
         const_iterator begin() const {
-            return data;
+            return this->data;
         }
         
         iterator end() {
-            return avail;
+            return this->avail;
         }
         const_iterator end() const {
-            return avail;
+            return this->avail;
         }
 
         private:
@@ -60,37 +63,39 @@ class Vec {
             iterator avail;
             iterator limit;
 
-        /* Facilities for memory allocation */
+        /*
+            Facilities for memory allocation
+        */
         allocator<T> alloc;
 
         template <class T>
         void create() {
-            data = avail = limit = 0;
+            this->data = this->avail = this->limit = 0;
         }
         template <class T>
         void create(size_type n, const T& val) {
-            data = alloc.allocate(n);
+            this->data = alloc.allocate(n);
         }
         template <class T>
         void create(const_iterator i, const_iterator j) {
-            data = alloc.allocate(j - i);
-            limit = avail = unitialized_copy(i, j, data);
+            this->data = alloc.allocate(j - i);
+            this->limit = this->avail = unitialized_copy(i, j, this->data);
         }
 
-        template<class T>
+        template <class T>
         void uncreate() {
-            if (data) {
+            if (this->data) {
                 // destroy each element that was constructed in reverse order
-                iterator it = avail;
+                iterator it = this->avail;
                 while (it != data) {
                     alloc.destroy(--it);
                 }
 
                 // free up the allocated space
-                alloc.deallocate(data, limit - data);
+                this->alloc.deallocate(this->data, this->limit - this->data);
             }
             // reset pointers
-            data = limit = avail = 0;
+            this->data = this->limit = this->avail = 0;
         }
 
         void grow();
