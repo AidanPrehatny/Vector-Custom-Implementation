@@ -63,9 +63,19 @@ class Vec {
         /* Facilities for memory allocation */
         allocator<T> alloc;
 
-        void create();
-        void create(size_type, const T&);
-        void create(const_iterator, const_iterator);
+        template <class T>
+        void create() {
+            data = avail = limit = 0;
+        }
+        template <class T>
+        void create(size_type n, const T& val) {
+            data = alloc.allocate(n);
+        }
+        template <class T>
+        void create(const_iterator i, const_iterator j) {
+            data = alloc.allocate(j - i);
+            limit = avail = unitialized_copy(i, j, data);
+        }
 
         void uncreate();
 
