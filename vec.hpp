@@ -30,9 +30,34 @@ class Vec {
         }
 
         void push_back(const T& t) {
-            if (avail == limit)
+            // if our allocated memory storage is exceeded by constructed objects, we will grow a new & copy current vals
+            if (avail == limit) {
                 grow();
+            }
             unchecked_append(t);
         }
+
+        size_type size() const {
+            return avail - data;
+        }
+
+        iterator begin() {
+            return data;
+        }
+        const_iterator begin() const {
+            return data;
+        }
+        
+        iterator end() {
+            return avail;
+        }
+        const_iterator end() const {
+            return avail;
+        }
+
+        private:
+            iterator data;
+            iterator avail;
+            iterator limit;
 
 };
