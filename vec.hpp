@@ -77,7 +77,21 @@ class Vec {
             limit = avail = unitialized_copy(i, j, data);
         }
 
-        void uncreate();
+        template<class T>
+        void uncreate() {
+            if (data) {
+                // destroy each element that was constructed in reverse order
+                iterator it = avail;
+                while (it != data) {
+                    alloc.destroy(--it);
+                }
+
+                // free up the allocated space
+                alloc.deallocate(data, limit - data);
+            }
+            // reset pointers
+            data = limit = avail = 0;
+        }
 
         void grow();
         void unchecked_append(const T&);
