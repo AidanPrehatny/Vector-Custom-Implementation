@@ -1,12 +1,14 @@
+#include <memory>
+
 template <class T>
 class Vec {
     public:
-        typdef T* iterator;
-        typdef const T* const_iterator;
-        typdef size_t size_t;
-        typdef T value_type;
-        typdef T& reference;
-        typdef const T& const_reference;
+        typedef T* iterator;
+        typedef const T* const_iterator;
+        typedef size_t size_type;
+        typedef T value_type;
+        typedef T& reference;
+        typedef const T& const_reference;
 
         /* 
             Constructor, Deconstructor, Assignment
