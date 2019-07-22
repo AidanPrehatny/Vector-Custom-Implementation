@@ -71,7 +71,16 @@ class Vec {
         /*
             Facilities for memory allocation
         */
-        allocator<T> alloc;
+        std::allocator<T> alloc;
+
+        void create();
+        void create(size_type, const T&);
+        void create(const_iterator, const_iterator);
+
+        void uncreate();
+        void grow();
+        void unchecked_append(const T&);
+};
 
         template <class T>
         void create() {
