@@ -1,4 +1,6 @@
 #include <memory>
+#include <algorithm>
+#include <iostream>
 
 template <class T>
 class Vec {
@@ -115,11 +117,11 @@ void Vec<T>::uncreate() {
 template <class T>
 void Vec<T>::grow() {
     // when growing, allocate twice the space currently in use to have flexibility with adding new elements
-    size_type new_size = max(2 * (this->limit - this->data), ptrdiff_t(1));
+    size_type new_size = std::max(2 * (this->limit - this->data), ptrdiff_t(1));
 
     // allocate new space and copy existing elements to new space
     iterator new_data = this->alloc.allocate(new_size);
-    iterator new_avail = uninitialized_copy(this->data, this->avail, new_data);
+    iterator new_avail = std::uninitialized_copy(this->data, this->avail, new_data);
 
     this->uncreate();
 }
