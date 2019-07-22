@@ -124,6 +124,11 @@ void Vec<T>::grow() {
     iterator new_avail = std::uninitialized_copy(this->data, this->avail, new_data);
 
     this->uncreate();
+
+    // reset pointers to newly allocated space
+    this->data = new_data;
+    this->avail = new_avail;
+    this->limit = this->data + new_size;
 }
 
 template <class T>
