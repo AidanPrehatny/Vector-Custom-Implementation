@@ -63,10 +63,10 @@ class Vec {
             return this->avail;
         }
 
-        private:
-            iterator data;
-            iterator avail;
-            iterator limit;
+    private:
+        iterator data;
+        iterator avail;
+        iterator limit;
 
         /*
             Facilities for memory allocation
@@ -82,51 +82,49 @@ class Vec {
         void unchecked_append(const T&);
 };
 
-        template <class T>
-        void create() {
-            this->data = this->avail = this->limit = 0;
-        }
-        template <class T>
-        void create(size_type n, const T& val) {
-            this->data = alloc.allocate(n);
-        }
-        template <class T>
-        void create(const_iterator i, const_iterator j) {
-            this->data = alloc.allocate(j - i);
-            this->limit = this->avail = unitialized_copy(i, j, this->data);
-        }
+template <class T>
+void Vec<T>::create() {
+    this->data = this->avail = this->limit = 0;
+}
+template <class T>
+void Vec<T>::create(size_type n, const T& val) {
+    this->data = this->alloc.allocate(n);
+}
+template <class T>
+void Vec<T>::create(const_iterator i, const_iterator j) {
+    this->data = this->alloc.allocate(j - i);
+    this->limit = this->avail = unitialized_copy(i, j, this->data);
+}
 
-        template <class T>
-        void uncreate() {
-            if (this->data) {
-                // destroy each element that was constructed in reverse order
-                iterator it = this->avail;
-                while (it != data) {
-                    alloc.destroy(--it);
-                }
-
-                // free up the allocated space
-                this->alloc.deallocate(this->data, this->limit - this->data);
-            }
-            // reset pointers
-            this->data = this->limit = this->avail = 0;
+template <class T>
+void Vec<T>::uncreate() {
+    if (this->data) {
+        // destroy each element that was constructed in reverse order
+        iterator it = this->avail;
+        while (it != this->data) {
+            this->alloc.destroy(--it);
         }
 
-        template <class T>
-        void grow() {
-            // when growing, allocate twice the space currently in use to have flexibility with adding new elements
-            size_type new_size = max(2 * (this->limit - this->data), ptrdiff(1));
+        // free up the allocated space
+        this->alloc.deallocate(this->data, this->limit - this->data);
+    }
+    // reset pointers
+    this->data = this->limit = this->avail = 0;
+}
 
-            // allocate new space and copy existing elements to new space
-            iterator new_data = alloc.allocate(new_size);
-            iterator new_avail = uninitialized_copy(this->data, this->avail, new_data);
+template <class T>
+void Vec<T>::grow() {
+    // when growing, allocate twice the space currently in use to have flexibility with adding new elements
+    size_type new_size = max(2 * (this->limit - this->data), ptrdiff_t(1));
 
-            this->uncreate();
-        }
+    // allocate new space and copy existing elements to new space
+    iterator new_data = this->alloc.allocate(new_size);
+    iterator new_avail = uninitialized_copy(this->data, this->avail, new_data);
 
-        template <class T>
-        void unchecked_append(const T& val) {
-            alloc.construct(this->avail++, val)
-        }
+    this->uncreate();
+}
 
-};
+template <class T>
+void Vec<T>::unchecked_append(const T& val) {
+    this->alloc.construct(this->avail++, val);
+}
